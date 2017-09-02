@@ -1,0 +1,301 @@
+/* Visual theme colours */
+/* ===================================================== */
+
+:root {
+    --bg-color: #ffffff;
+    --bg-alt1-color: #fafafa;
+    --bg-alt2-color: #f0f0f0;
+    --bg-alt3-color: #d4d4d4;
+    --link-color: #87aed3;
+    --active-color: #94d31b;
+    --highlight-color: #e06671;
+
+    /* Default zoom level  */
+    --pixels-per-day: 1;
+
+    /* Default values - overriden by js */
+    --duration-days: 1;
+    --relative-start-day: 0;
+}
+
+/* Defaults */
+/* ===================================================== */
+
+html, body {
+    margin:0;
+    padding:0;
+    overflow:auto;
+    font-size: 12px;
+    font-family: arial, helvetica, sans-serif;
+}
+
+/* Templates are data prototypes to clone */
+/* ===================================================== */
+
+#templates {
+    display:none;
+}
+
+/* Date bar styling */
+/* ===================================================== */
+
+#dates {
+    height:100px;
+    margin-left: 400px;
+}
+#dates .datebar{
+    position: fixed;
+}
+#dates .years rect:nth-child(odd)  { fill:var(--bg-alt1-color); }
+#dates .years rect:nth-child(even) { fill:var(--bg-alt2-color); }
+#dates .months rect:nth-child(odd)  { fill:var(--bg-alt1-color); }
+#dates .months rect:nth-child(even) { fill:var(--bg-alt2-color); }
+#dates .weeks rect:nth-child(odd)  { fill:var(--bg-alt1-color); }
+#dates .weeks rect:nth-child(even) { fill:var(--bg-alt2-color); }
+/*#dates .days rect:nth-child(odd)  { fill:var(--bg-alt1-color); }
+#dates .days rect:nth-child(even) { fill:var(--bg-alt2-color); }*/
+#dates .day     { fill:var(--bg-alt1-color); }
+#dates .weekend { fill:#555; }
+
+/* Summary styling - for mile-high view */
+/* ===================================================== */
+
+#summary {
+    display:block;
+    position:absolute;
+    background: var(--bg-color);
+    padding-top:  100px;
+    padding-left: 400px;
+    padding-right: 10000px;
+    overflow: scroll;
+}
+#summary table {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    stroke: none;
+    text-align: left;
+    font-size: 12px;
+    font-family: arial, helvetica, sans-serif;
+}
+
+/* Task list styling */
+/* ===================================================== */
+
+.tree {
+    display:inline-block;
+    background:var(--bg-alt1-color);
+    white-space: nowrap;
+    min-height:2048px;
+    min-width:300px;
+    padding-top:50px;
+    padding-left:10px;
+}
+.tree .task {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    min-height:23px;
+    transition: all 0.5s;
+}
+.tree .task > .children{
+    padding-top:10px;
+    padding-left: 20px;
+    max-height: 10000px;
+    overflow:hidden;
+    transition: opacity 0.5s, max-height 0.5s;
+    border-left: 1px var(--bg-alt3-color) dotted;
+}
+.tree .task:not(.expanded) > .children{
+/*     display:none; */
+    opacity: 0;
+    visibility: hidden;
+    max-height:0px;
+/*     overflow:hidden; */
+}
+
+.tree i {
+    font-size:0.8em;
+    margin-right:5px;
+    color: var(--active-color);
+}
+.tree .duration {
+    margin-right:5px;
+}
+.tree .treeicon, .goalicon, .anchoricon {
+    cursor:pointer;
+}
+.tree .task:not(.expanded) > .head > .im-angle-up {display:none;}
+.tree .task.expanded > .head > .im-angle-down {display:none;}
+.tree .task[data-numchildren='0'] > .head > .treeicon { display:none; }
+.tree .task:not([data-numchildren='0']) > .head > .im-radio-button-circle { display:none; }
+.tree .task.selected {
+    box-shadow:inset 0px 0px 0px 1px var(--highlight-color);
+}
+
+/* Task list styling for chart */
+/* ===================================================== */
+
+.gantt {
+    background:var(--bg-color);
+    white-space: nowrap;
+    min-height:2048px;
+    min-width:300px;
+    padding-top:50px;
+    padding-left:10px;
+}
+.gantt .task {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    min-height:23px;
+    border-radius: 5px;
+    background-color: rgba(0,0,0,0.02);
+    margin-left: calc(var(--pixels-per-day) * var(--relative-start-day) * 1px);
+    transition: width 0.5s;
+}
+.gantt .task > .head {
+    border-radius: 5px;
+    width: calc(var(--pixels-per-day) * var(--duration-days) * 1px);
+    transition: width 0.5s;
+}
+.gantt .task[data-numchildren='0'] > .head {
+    background: var(--active-color);
+}
+.gantt .task:not([data-numchildren='0']) > .head {
+    padding-top:4px;
+    padding-bottom:4px;
+    background: var(--bg-alt3-color);
+}
+.gantt .task:not([data-numchildren='0']):not(.expanded) > .head {
+    background: var(--active-color);
+}
+
+.gantt .task[data-numchildren='0'] > .head > .name {
+    position: relative;
+    left: calc(100% + 10px);
+}
+.gantt .task:not([data-numchildren='0']) > .head > .name {
+    text-align: center;
+}
+.gantt .task > .children{
+    display:inline-block;
+    padding-top:10px;
+    padding-left: 0px;
+    max-height: 1000px;
+    transition: all 0.5s;
+}
+.gantt .task:not(.expanded) > .children{
+/*     display:none; */
+    opacity: 0;
+    visibility: hidden;
+    max-height:0px;
+    overflow:hidden;
+}
+
+.gantt i {
+    font-size:0.8em;
+    margin-left:6px;
+    margin-right:5px;
+    color: var(--highlight-color);
+}
+.gantt .head .duration, .gantt .goalicon, .gantt .anchoricon, .gantt .im-radio-button-circle {
+    display:none;
+}
+.gantt .treeicon {
+    cursor:pointer;
+}
+.gantt .task:not(.expanded) > .head > .im-angle-up {display:none;}
+.gantt .task.expanded > .head > .im-angle-down {display:none;}
+.gantt .task[data-numchildren='0'] > .head > .treeicon { display:none; }
+.gantt .task:not([data-numchildren='0']) > .head > .im-radio-button-circle { display:none; }
+.gantt .task.selected {
+    box-shadow:inset 0px 0px 0px 1px var(--highlight-color);
+}
+
+/* Editor view */
+/* ===================================================== */
+
+[contenteditable]:focus {
+    outline: 0px solid transparent;
+}
+
+.editor {
+    border: 1px var(--bg-alt3-color) solid;
+    border-radius:5px;
+    background:var(--bg-color);
+    margin:5px;
+    display:block;
+    transition: max-height 0.5s;
+    opacity:0;
+    max-height:0px;
+    overflow:hidden;
+    border-spacing:5px;
+}
+
+.editor .input {
+    border: 1px var(--bg-alt3-color) solid;
+    min-height:1em;
+    padding: 5px;
+    width:200px;
+    overflow:auto;
+}
+
+.editor td {
+    vertical-align:top;
+    padding-right:5px;
+}
+
+.editor .depends {
+    font-size: 10px;
+}
+
+.task[data-numchildren='0'].edit .editor {
+    display:inline-block;
+    max-height:none;
+    opacity:1;
+    padding:6px;
+}
+
+/* Toolbar menu styling */
+/* ===================================================== */
+
+#menu {
+    position: fixed;
+    background:var(--bg-alt1-color);
+    padding:10px;
+    z-index: 1;
+}
+
+#menu i {
+    font-size:1.2em;
+    margin-left:5px;
+    cursor: pointer;
+}
+
+/* Positioning for fixed horizontal or vertical elements */
+/* ===================================================== */
+
+.fixed-vertical {
+    position: fixed;
+}
+.fixed-horizontal {
+    position: fixed;
+}
+
+/* Today line and dependency edges appearence
+/* ===================================================== */
+
+.todayline{
+    stroke-width:2px;
+    stroke:var(--highlight-color);
+    stroke-linecap:"round";
+    stroke-dasharray:2,2;
+}
+
+.edge{
+    stroke: var(--link-color);
+    stroke-width: 2.5px;
+    fill: none;
+    cursor: pointer;
+}

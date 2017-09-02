@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Planner</title>
+		<link rel="stylesheet" type="text/css" href="https://cdn.iconmonstr.com/1.2.0/css/iconmonstr-iconic-font.min.css"/>
+		<link rel="stylesheet" type="text/css" href="res/planner.css"/>
+		<script type="text/javascript" src="https://cdn.rawgit.com/eligrey/Blob.js/0cef2746414269b16834878a8abc52eb9d53e6bd/Blob.js"></script>
+	    <script type="text/javascript" src="https://cdn.rawgit.com/eligrey/FileSaver.js/e9d941381475b5df8b7d7691013401e171014e89/FileSaver.min.js"></script>
+		<script type="text/javascript" src="js/jquery/jquery-1.12.4.js"></script>
+		<script type="text/javascript" src="js/jquery/svg/jquery.svg.min.js"></script>
+		<script type="text/javascript" src="js/velocity.js"></script>
+		<script type="text/javascript" src="js/velocity.ui.js"></script>
+		<script type="text/javascript" src="js/moment.min.js"></script>
+		<script type="text/javascript" src="js/planner/task.js"></script>
+		<script type="text/javascript" src="js/planner/edge.js"></script>
+		<script type="text/javascript" src="js/planner/planner.js"></script>
+		<script type="text/javascript" src="js/planner/date_bar.js"></script>
+		<script type="text/javascript" src="js/planner/scroller.js"></script>
+		<script type="text/javascript" src="js/planner/io.js"></script>
+    <script>
+//<![CDATA[
+function NewFileLoadedCallback()
+{
+	PopulateElementWithPlanner( $('#table'), root_project_task);
+	// PopulateElementWithPlanner( $('#chart'), root_project_task);
+}
+
+$(document).ready(function() {
+	// Initialise Planner,attaching to SVG etc
+	InitialiseProject();
+	NewFileLoadedCallback();
+
+	// Handle fixed vertical/horizontal scrolling elements.
+	let scroller = new Scroller($(document));
+	$("#summary").toggle(0);
+});
+//]]>
+    </script>
+	</head>
+	<body>
+	<div id="menu">
+		<input type='file' id='fileinput' onchange="LoadFromFile(this);" style="display: none">
+		<div class="toolbar">
+			<a title="Load Project" onclick='$("#fileinput").trigger("click");'><i class="im im-file-o"></i></a>
+			<a title="Save Project" onclick='SaveFile();'><i class="im im-floppy-disk"></i></a>
+			<span style="margin-left:10px">&nbsp;</span>
+			<a title="Move Task Up" onclick='TaskMoveUp();'><i class="im im-menu-list" style="-webkit-transform:rotateX(180deg);transform:rotateX(180deg);padding-top:4px"></i></a>
+			<a title="Move Task Down" onclick='TaskMoveDown();'><i class="im im-menu-list"></i></a>
+			<a title="Undent Task" onclick='TaskUndent();'><i class="im im-arrow-left"></i></a>
+			<a title="Indent Task" onclick='TaskIndent();'><i class="im im-arrow-right"></i></a>
+			<a title="Delete Task" onclick='TaskDelete();'><i class="im im-fire"></i></a>
+			<span style="margin-left:10px">&nbsp;</span>
+			<a title="Zoom Out" onclick='ZoomOut();'><i class="im im-magnifier-minus"></i></a>
+			<a title="Zoom In" onclick='ZoomIn();'><i class="im im-magnifier-plus"></i></a>
+			<span style="margin-left:10px">&nbsp;</span>
+			<a title="Collapse All" onclick='CollapseAll();'><i class="im im-minimize"></i></a>
+			<a title="Expand All" onclick='ExpandAll();'><i class="im im-maximize"></i></a>
+			<a title="Focus" onclick='Focus(GetSelectedTask());'><i class="im im-fullscreen"></i></a>
+			<span style="margin-left:10px">&nbsp;</span>
+			<a title="Toggle Edges" onclick='ToggleDependencies();'><i class="im im-link"></i></a>
+			<a title="Toggle Summary" onclick='$("#table").toggleClass("gantt");$("#table").toggleClass("tree");'><i class="im im-flip-chart-o"></i></a>
+		</div>
+	</div>
+	<!-- <div id="chart" class="gantt"></div> -->
+	<div id="table" class="tree"></div>
+
+	<!-- this 'templates' div is hidden. Planner.js clones these elements for display. -->
+	<div id='templates'>
+		<div class='task'>
+			<div class='head'>
+				<i class='im im-radio-button-circle'></i>
+				<i class='im im-angle-up treeicon'></i>
+				<i class='im im-angle-down treeicon'></i>
+				<span contenteditable="true" class='name'></span>
+				<span style='float:right'>
+					<span contenteditable="true" class='duration'></span>
+					<i title='Anchor to Date' class='im im-anchor anchoricon'></i>
+					<i title='Mark As Goal' class='im im-target goalicon'></i>
+				</span>
+			</div>
+			<table class='editor'>
+				<tr><td>Predecessors:</td><td><div class='input depends'/></td></tr>
+				<tr><td>Notes:</td><td><div contenteditable="true" class='input notes'/></td></tr>
+				<tr><td>Duration:</td><td><div contenteditable="true" class='duration'/></td></tr>
+			</table>
+			<div class='children'></div>
+		</div>
+	</div>
+
+  </body>
+</html>
