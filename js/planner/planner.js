@@ -50,6 +50,34 @@ function SwapNodes(a, b) {
     aparent.insertBefore(b, asibling);
 }
 
+function NewTask()
+{
+    let uid = GetSelectedTaskUid();
+    let task = root_project_task.uid_map[uid];
+    if(task && task._parent)  {
+        let idx = task.ChildIndexInParent();
+        if(idx < task._parent.children.length-1) {
+            // Add as sibling
+            let new_uid = 'task_' + Math.floor((1 + Math.random()) * 0x100000000000).toString();
+            let new_task = new Task(null, new_uid, new_uid, '', 1);
+            task._parent.AddChild(new_task, idx+1);
+
+            $("[data-uid='"+task._parent.uid+"'] > .children").each(function(){
+                // Create new DOM task
+                let eltask = $('#templates > .task').clone();
+                eltask[0].dataset.uid = new_uid;
+                AddTaskEvents(eltask, new_task);
+
+                // Insert in correct place after selected task.
+                let elsib = $(this).find("> [data-uid='"+uid+"']")[0];
+                elsib.after(eltask[0]);
+            });
+            ComputeSchedule();
+            UpdateRootElementFromProject($('html'), root_project_task);
+        }
+    }
+}
+
 function TaskMoveUp()
 {
     let uid = GetSelectedTaskUid();
@@ -175,25 +203,17 @@ function FocusNextDurationElement(root_element, current_duration_element)
     }
 }
 
-function AppendProjectStructure(root_element, template_element, root_task, level)
+function AddTaskEvents(eltask, root_task)
 {
-    let eltask = $(template_element).clone().appendTo(root_element);
-    let elchilds = eltask.find('.children')[0];
-    eltask[0].dataset.uid = root_task.uid;
-
-    for(let c=0; c < root_task.children.length; ++c) {
-        AppendProjectStructure(elchilds, template_element, root_task.children[c], root_task._start_ms, level+1);
-    }
-
-    eltask.find('> .head').on('click', function(){
+    eltask.find('> .head > .name').on('click', function(){
         if( !$(eltask).hasClass('selected') ) {
             $('.selected').removeClass('selected');
+            $(eltask).addClass('selected');
         }
-        $(eltask).toggleClass('selected');
     });
 
     // Add event handler
-    eltask.find('> .head').on('dblclick', function(){
+    eltask.find('> .head > .name').on('dblclick', function(){
         if( !$(eltask).hasClass('edit') ) {
             $('.edit').removeClass('edit');
             $('.selected').removeClass('selected');
@@ -206,7 +226,19 @@ function AppendProjectStructure(root_element, template_element, root_task, level
 
     // Add event handler
     eltask.find('> .head > .treeicon').on('click', function(){
-        $(eltask).toggleClass('expanded');
+        $(".task[data-uid='"+root_task.uid+"']").toggleClass('expanded');
+    });
+
+    // Prevent adding new lines.
+    $(eltask.find('.name')).on('keypress',function(e){
+        if(e.keyCode==13){
+            e.preventDefault();
+            let name = $(e.currentTarget).text();
+            if(name != root_task.name) {
+                root_task.SetName(name);
+                UpdateRootElementFromProject($('html'), root_project_task);
+            }
+        }
     });
 
     // Prevent adding new lines.
@@ -217,7 +249,7 @@ function AppendProjectStructure(root_element, template_element, root_task, level
             if(dur != root_task.duration_days) {
                 root_task.SetDuration(dur);
                 ComputeSchedule();
-                FocusNextDurationElement(root_element, e.currentTarget);
+                // FocusNextDurationElement(root_element, e.currentTarget);
                 UpdateRootElementFromProject($('html'), root_project_task);
             }
         }
@@ -245,6 +277,19 @@ function AppendProjectStructure(root_element, template_element, root_task, level
             }
         }
     });
+}
+
+function AppendProjectStructure(root_element, template_element, root_task, level)
+{
+    let eltask = $(template_element).clone().appendTo(root_element);
+    let elchilds = eltask.find('.children')[0];
+    eltask[0].dataset.uid = root_task.uid;
+
+    for(let c=0; c < root_task.children.length; ++c) {
+        AppendProjectStructure(elchilds, template_element, root_task.children[c], root_task._start_ms, level+1);
+    }
+
+    AddTaskEvents(eltask, root_task);
 }
 
 function PopulateElementWithPlanner(root_element, root_task)

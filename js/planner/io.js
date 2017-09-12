@@ -119,7 +119,7 @@ function AddFileJsonToProject(filename, json)
         new_task.is_anchor = (t.startIsMilestone || t.endIsMilestone);
         new_task.duration_days = t.duration;
         new_task.started_date = new_task.is_anchor ? t.start : null;
-        new_task.lazy = false;
+        new_task.lazy = t.lazy == null ? false : t.lazy;
         new_task.depends = t.depends;
 
 		p.AddChild(new_task);
@@ -173,15 +173,16 @@ function SerializeTask(task, json_tasks, outlinelevel)
         "description": task.notes,
         "level": outlinelevel,
         "status": "STATUS_ACTIVE",
-        "depends": [],
+        "depends": task.depends,
         "canWrite": true,
         "start": task._start_ms,
         "duration": task.duration_days,
         "end": task._end_ms,
-        "startIsMilestone": false,
+        "startIsMilestone": task.is_anchor,
         "endIsMilestone": false,
         "collapsed": false,
-        "assigs": []
+        "assigs": [],
+        "lazy":task.is_lazy
       }
     );
 
