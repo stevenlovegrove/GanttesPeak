@@ -8,7 +8,10 @@
     --bg-alt3-color: #d4d4d4;
     --link-color: #87aed3;
     --active-color: #94d31b;
+
     --highlight-color: #e06671;
+    --bg-highlight-color: #f9f1f1;
+    --bg-highlight2-color: #f3e3e3;
 
     /* Default zoom level  */
     --pixels-per-day: 1;
@@ -79,7 +82,34 @@ html, body {
     font-family: arial, helvetica, sans-serif;
 }
 
-/* Task list styling */
+/* Task style */
+/* ===================================================== */
+
+.task {
+    display:grid;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    min-height:20px;
+}
+.task:not([data-numchildren='0']) > .head {
+    padding-top:4px;
+    padding-bottom:4px;
+}
+.task > .children{
+    display:inline-block;
+    padding-left: 0px;
+    max-height: 10000px;
+}
+
+.task i {
+    font-size:0.8em;
+    margin-left:6px;
+    margin-right:5px;
+    color: var(--active-color);
+}
+
+/* Task tree style */
 /* ===================================================== */
 
 .tree {
@@ -87,38 +117,22 @@ html, body {
     background:var(--bg-alt1-color);
     white-space: nowrap;
     min-height:2048px;
-    min-width:300px;
-    padding-top:50px;
-    padding-left:10px;
 }
 .tree .task {
-    border: 0;
-    padding: 0;
-    margin: 0;
-    min-height:23px;
     transition: all 0.5s;
 }
 .tree .task > .children{
-    padding-top:10px;
     padding-left: 20px;
-    max-height: 10000px;
     overflow:hidden;
     transition: opacity 0.5s, max-height 0.5s;
     border-left: 1px var(--bg-alt3-color) dotted;
 }
 .tree .task:not(.expanded) > .children{
-/*     display:none; */
     opacity: 0;
     visibility: hidden;
     max-height:0px;
-/*     overflow:hidden; */
 }
 
-.tree i {
-    font-size:0.8em;
-    margin-right:5px;
-    color: var(--active-color);
-}
 .tree .duration {
     margin-right:5px;
 }
@@ -129,8 +143,13 @@ html, body {
 .tree .task.expanded > .head > .im-angle-down {display:none;}
 .tree .task[data-numchildren='0'] > .head > .treeicon { display:none; }
 .tree .task:not([data-numchildren='0']) > .head > .im-radio-button-circle { display:none; }
+.tree .task:not(.selected) > .head:hover {
+    background-color: var(--bg-highlight-color);
+    border-radius: 5px;
+}
 .tree .task.selected {
-    box-shadow:inset 0px 0px 0px 1px var(--highlight-color);
+    background-color: var(--bg-highlight2-color);
+    border-radius: 5px;
 }
 
 /* Task list styling for chart */
@@ -140,15 +159,8 @@ html, body {
     background:var(--bg-color);
     white-space: nowrap;
     min-height:2048px;
-    min-width:300px;
-    padding-top:50px;
-    padding-left:10px;
 }
 .gantt .task {
-    border: 0;
-    padding: 0;
-    margin: 0;
-    min-height:23px;
     border-radius: 5px;
     background-color: rgba(0,0,0,0.02);
     margin-left: calc(var(--pixels-per-day) * var(--relative-start-day) * 1px);
@@ -163,8 +175,6 @@ html, body {
     background: var(--active-color);
 }
 .gantt .task:not([data-numchildren='0']) > .head {
-    padding-top:4px;
-    padding-bottom:4px;
     background: var(--bg-alt3-color);
 }
 .gantt .task:not([data-numchildren='0']):not(.expanded) > .head {
@@ -179,14 +189,9 @@ html, body {
     text-align: center;
 }
 .gantt .task > .children{
-    display:inline-block;
-    padding-top:10px;
-    padding-left: 0px;
-    max-height: 1000px;
     transition: all 0.5s;
 }
 .gantt .task:not(.expanded) > .children{
-/*     display:none; */
     opacity: 0;
     visibility: hidden;
     max-height:0px;
@@ -194,12 +199,12 @@ html, body {
 }
 
 .gantt i {
-    font-size:0.8em;
-    margin-left:6px;
-    margin-right:5px;
     color: var(--highlight-color);
 }
-.gantt .head .duration, .gantt .goalicon, .gantt .anchoricon, .gantt .im-radio-button-circle {
+.gantt .taskbuttons {
+    display: none;
+}
+.gantt .im-radio-button-circle {
     display:none;
 }
 .gantt .treeicon {
@@ -260,14 +265,16 @@ html, body {
 /* Toolbar menu styling */
 /* ===================================================== */
 
-#menu {
+.toolbar {
     position: fixed;
+    width: 100%;
+    height: 20px;
     background:var(--bg-alt1-color);
     padding:10px;
     z-index: 1;
 }
 
-#menu i {
+.toolbar i {
     font-size:1.2em;
     margin-left:5px;
     cursor: pointer;
