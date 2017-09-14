@@ -54,12 +54,13 @@ function NewTask()
 {
     let uid = GetSelectedTaskUid();
     let task = root_project_task.uid_map[uid];
-    if(task && task._parent)  {
-        let idx = task.ChildIndexInParent();
-        if(idx < task._parent.children.length-1) {
+    if(task) {
+        let new_uid = 'task_' + Math.floor((1 + Math.random()) * 0x100000000000).toString();
+        let new_task = new Task(null, new_uid, new_uid, '', 1);
+
+        if(task._parent)  {
             // Add as sibling
-            let new_uid = 'task_' + Math.floor((1 + Math.random()) * 0x100000000000).toString();
-            let new_task = new Task(null, new_uid, new_uid, '', 1);
+            let idx = task.ChildIndexInParent();
             task._parent.AddChild(new_task, idx+1);
 
             $("[data-uid='"+task._parent.uid+"'] > .children").each(function(){
@@ -67,10 +68,21 @@ function NewTask()
                 let eltask = $('#templates > .task').clone();
                 eltask[0].dataset.uid = new_uid;
                 AddTaskEvents(eltask, new_task);
+                let elsib = $(this).find("> [data-uid='"+uid+"']");
+                elsib[0].after(eltask[0]);
+            });
+            ComputeSchedule();
+            UpdateRootElementFromProject($('html'), root_project_task);
+        }else{
+            // No parent - add as child.
+            task.AddChild(new_task);
 
-                // Insert in correct place after selected task.
-                let elsib = $(this).find("> [data-uid='"+uid+"']")[0];
-                elsib.after(eltask[0]);
+            $("[data-uid='"+task.uid+"'] > .children").each(function(){
+                // Create new DOM task
+                let eltask = $('#templates > .task').clone();
+                eltask[0].dataset.uid = new_uid;
+                AddTaskEvents(eltask, new_task);
+                $(this).append(eltask[0]);
             });
             ComputeSchedule();
             UpdateRootElementFromProject($('html'), root_project_task);
