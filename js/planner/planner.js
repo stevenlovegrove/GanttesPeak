@@ -57,6 +57,7 @@ function NewTask()
     if(task) {
         let new_uid = 'task_' + Math.floor((1 + Math.random()) * 0x100000000000).toString();
         let new_task = new Task(null, new_uid, new_uid, '', 1);
+        root_project_task.uid_map[new_uid] = new_task;
 
         if(task._parent)  {
             // Add as sibling
