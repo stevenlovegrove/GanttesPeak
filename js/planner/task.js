@@ -1,6 +1,6 @@
 class Task
 {
-    constructor(parent, uid, name, notes, duration_days)
+    constructor(uid, name, notes, duration_days)
     {
         this.uid = uid;
         this.name = name;
@@ -20,7 +20,7 @@ class Task
         this.goal = 0;
 
         // Cached options
-        this._parent = parent;
+        this._parent = null;
         this._start_ms = null;
         this._end_ms = null;
 

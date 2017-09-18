@@ -55,8 +55,8 @@ function NewTask()
     let uid = GetSelectedTaskUid();
     let task = root_project_task.uid_map[uid];
     if(task) {
-        let new_uid = 'task_' + Math.floor((1 + Math.random()) * 0x100000000000).toString();
-        let new_task = new Task(null, new_uid, new_uid, '', 1);
+        let new_uid = NewUid();
+        let new_task = new Task(new_uid, new_uid, '', 1);
         root_project_task.uid_map[new_uid] = new_task;
 
         if(task._parent)  {
@@ -299,7 +299,7 @@ function AppendProjectStructure(root_element, template_element, root_task, level
     eltask[0].dataset.uid = root_task.uid;
 
     for(let c=0; c < root_task.children.length; ++c) {
-        AppendProjectStructure(elchilds, template_element, root_task.children[c], root_task._start_ms, level+1);
+        AppendProjectStructure(elchilds, template_element, root_task.children[c], level+1);
     }
 
     AddTaskEvents(eltask, root_task);
@@ -307,9 +307,16 @@ function AppendProjectStructure(root_element, template_element, root_task, level
 
 function PopulateElementWithPlanner(root_element, root_task)
 {
+    // Remove previous DOM elements
     root_element.find("> div").remove();
-    AppendProjectStructure( root_element, $('#templates > .task'), root_task, 0);
+
+    let template_element = $('#templates > .task');
+
+    AppendProjectStructure( root_element, template_element, root_task, 0);
     UpdateRootElementFromProject( root_element, root_task);
+
+    root_element.find(".task[data-uid='"+root_task.uid+"'] > .head").toggle();
+    ExpandAll();
 }
 
 function UpdateRootElementFromProject(root_element, root_task)
@@ -389,7 +396,7 @@ function GetDependencies(task)
 // https://en.wikipedia.org/wiki/Topological_sorting
 function GetTopologicalTaskOrdering(root_project_task)
 {
-    let unmarked = root_project_task.GetDescendents();
+    let unmarked = [root_project_task].concat(root_project_task.GetDescendents());
     let ordered = [];
     unmarked.forEach(function(task){task._topo_ordering=null;});
 
@@ -425,8 +432,8 @@ function GetTopologicalTaskOrdering(root_project_task)
         Visit(unmarked.pop());
     }
 
-    // Add back in root.
-    ordered.unshift(root_project_task);
+    // // Add back in root.
+    // ordered.unshift(root_project_task);
 
     return ordered;
 }

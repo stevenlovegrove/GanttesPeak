@@ -88,13 +88,29 @@ function LoadFromProjectJson(json, filename)
     ComputeSchedule();
 }
 
+function NewUid()
+{
+    return 'task_' + Math.floor((1 + Math.random()) * 0x100000000000).toString();
+}
+
 function CreateProject()
 {
     // Create root task with augmented properties
-    let project = new Task(null, '__', 'Planner');
-    project.uid_map = {'__':project};
+    let project = new Task( NewUid(), 'Planner');
+    project.uid_map = {};
+    project.uid_map[project.uid] = project
     project.edges = [];
-    // project.date_bar = new DateBar(dates_svg);
+
+    // Add default child project
+    let new_file = new Task( NewUid(), 'untitled.json', '', 1)
+    // new_task.is_anchor = (t.startIsMilestone || t.endIsMilestone);
+    // new_task.duration_days = t.duration;
+    // new_task.started_date = new_task.is_anchor ? t.start : null;
+    // new_task.lazy = t.lazy == null ? false : t.lazy;
+    // new_task.depends = t.depends;
+
+    project.AddChild(new_file);
+    project.uid_map[new_file.uid] = new_file
 
     return project;
 }
@@ -104,7 +120,7 @@ function AddFileJsonToProject(filename, json)
 	let tasklist = json['tasks'];
 
     // New child of root_project_task for file.
-    let filetask = new Task(root_project_task, filename, filename);
+    let filetask = new Task(filename, filename, '');
     root_project_task.AddChild(filetask);
     root_project_task.uid_map[filename] = filetask;
 	let stack = [filetask];
@@ -114,7 +130,7 @@ function AddFileJsonToProject(filename, json)
 	{
 		let t = tasklist[i];
 		let p = stack[stack.length-1];
-		let new_task = new Task(p, t.id, t.name, t.description);
+		let new_task = new Task(t.id, t.name, t.description);
 
         new_task.is_anchor = (t.startIsMilestone || t.endIsMilestone);
         new_task.duration_days = t.duration;
