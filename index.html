@@ -7,15 +7,10 @@
 		<script type="text/javascript" src="https://cdn.rawgit.com/eligrey/Blob.js/0cef2746414269b16834878a8abc52eb9d53e6bd/Blob.js"></script>
 	    <script type="text/javascript" src="https://cdn.rawgit.com/eligrey/FileSaver.js/e9d941381475b5df8b7d7691013401e171014e89/FileSaver.min.js"></script>
 		<script type="text/javascript" src="js/jquery/jquery-1.12.4.js"></script>
-		<script type="text/javascript" src="js/jquery/svg/jquery.svg.min.js"></script>
-		<script type="text/javascript" src="js/velocity.js"></script>
-		<script type="text/javascript" src="js/velocity.ui.js"></script>
 		<script type="text/javascript" src="js/moment.min.js"></script>
 		<script type="text/javascript" src="js/planner/task.js"></script>
-		<script type="text/javascript" src="js/planner/edge.js"></script>
 		<script type="text/javascript" src="js/planner/planner.js"></script>
 		<script type="text/javascript" src="js/planner/date_bar.js"></script>
-		<script type="text/javascript" src="js/planner/scroller.js"></script>
 		<script type="text/javascript" src="js/planner/io.js"></script>
     <script>
 //<![CDATA[
@@ -30,8 +25,6 @@ $(document).ready(function() {
 	InitialiseProject();
 	NewFileLoadedCallback();
 
-	// Handle fixed vertical/horizontal scrolling elements.
-	let scroller = new Scroller($(document));
 	$("#summary").toggle(0);
 });
 //]]>

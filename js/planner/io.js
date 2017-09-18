@@ -158,20 +158,6 @@ function AddFileJsonToProject(filename, json)
 		}
 	}
 
-    // Instantiate links: Depth-first traversal.
-    // Create tasks: Depth-first traversal.
-    for(let i=0; i < tasklist.length; ++i)
-    {
-        let t = tasklist[i];
-        let task_to = root_project_task.uid_map[t.id];
-
-        for(let d=0; d < t.depends.length; ++d) {
-            let task_from = root_project_task.uid_map[t.depends[d]];
-            let e = new Edge(task_from, task_to);
-            root_project_task.edges.push(e);
-        }
-    }
-
     ComputeSchedule();
 
     if(NewFileLoadedCallback) {
